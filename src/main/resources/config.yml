@@ -1,0 +1,45 @@
+# package cn.cyanbukkit.block.gamehandle 的 Assist 是 策略上
+# package cn.cyanbukkit.block.gamehandle 的 TNTBoom 是 TNT爆炸上的
+Mode: "挖" # 挖 / 建
+Setting:
+  #统一的区域设置
+  Arena:
+    World: "world"
+    Pos1: "0,0,0"
+    Pos2: "0,0,0"
+    Spawn: "0,0,0,0,0"
+    KeepTime: 15 # 保持时间
+    Down: 15 # 该设置是根据目前平面的高度增加多少格下降！   Tip： 之前根据好几个主播描述这个统一这个下落起点前增加的高度吧
+  # 你要挖的方块
+  Break:
+    # 那下落的是沙子但是最终的方块会被替换成这个Material
+    BlockList:
+      - "SAND"
+      - "WHITE_CONCRETE_POWDER"
+      - "ORANGE_CONCRETE_POWDER"
+      - "MAGENTA_CONCRETE_POWDER"
+      - "LIGHT_BLUE_CONCRETE_POWDER"
+      - "YELLOW_CONCRETE_POWDER"
+      - "LIME_CONCRETE_POWDER"
+      - "PINK_CONCRETE_POWDER"
+      - "GRAY_CONCRETE_POWDER"
+      - "LIGHT_GRAY_CONCRETE_POWDER"
+      - "CYAN_CONCRETE_POWDER"
+      - "PURPLE_CONCRETE_POWDER"
+      - "BLUE_CONCRETE_POWDER"
+      - "BROWN_CONCRETE_POWDER"
+      - "GREEN_CONCRETE_POWDER"
+      - "RED_CONCRETE_POWDER"
+      - "BLACK_CONCRETE_POWDER"
+    Tools: [] # 这个是挖掘这个工具限制什么工具才可以挖 如果为空的就是所有工具都可以挖 填写方式[]
+#      - "WOODEN_PICKAXE"
+#      - "STONE_PICKAXE"
+  Place: # 这里设置放置方块会转换成什么方块
+    List:
+      - "IRON_BLOCK"
+      - "DIAMOND_BLOCK"
+      - "AMETHYST_BLOCK"
+      - "REDSTONE_BLOCK"
+
+
+
