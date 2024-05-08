@@ -1,9 +1,11 @@
 package cn.cyanbukkit.block.data
 
+import org.apache.commons.lang3.RandomUtils
 import org.bukkit.Effect
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
+import org.bukkit.entity.Pig
 
 
 class NumberPair(a: Int, b: Int) {
@@ -31,7 +33,7 @@ data class Region(val pos1: Location, val pos2: Location, val world: org.bukkit.
     /**
      * 光清理区域的所有 直接连顶上的方块也一并清楚
      */
-    private fun clean() {
+    fun clean() {
         for (dy in y.min..maxY) {
             for (dx in x.min..x.max) {
                 for (dz in z.min..z.max) {
@@ -41,6 +43,14 @@ data class Region(val pos1: Location, val pos2: Location, val world: org.bukkit.
                 }
             }
         }
+    }
+
+    /**
+     * 区域顶上随机烟花
+     */
+    fun randomFirework() {
+        val b = world.getBlockAt(x.random(), getY() + DataLoader.downSize, z.random())
+        b.location.world!!.spawn(b.location, org.bukkit.entity.Firework::class.java)
     }
 
     /**
@@ -70,6 +80,28 @@ data class Region(val pos1: Location, val pos2: Location, val world: org.bukkit.
             }
         }
         return locs
+    }
+
+    fun spawnPig(amount: Int = 10) {
+        for (c in 0 until amount) {
+            val loc = Location(world, x.min + (x.len * Math.random()), getY() + 3.5, z.min + (z.len * Math.random()))
+            (world.spawnEntity(loc, org.bukkit.entity.EntityType.PIG) as Pig).apply {
+                getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH)!!.baseValue = 50.0
+                health = 50.0
+            }
+        }
+    }
+    private fun random(): Int {
+        return if (RandomUtils.nextBoolean()) 1 else -1
+    }
+
+    /**
+     * 根据最低的y + add 高度在随机x z 生成 一个Location
+     */
+    fun randomLoc() : Location {
+        val x = RandomUtils.nextInt(0, x.len / 2) + 0.15
+        val z = RandomUtils.nextInt(0, z.len / 2) + 0.15
+        return Location(world, x + random(), (getY() + DataLoader.downSize).toDouble(), z + random())
     }
 
 }

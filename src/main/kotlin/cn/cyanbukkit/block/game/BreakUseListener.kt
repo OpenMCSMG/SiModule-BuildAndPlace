@@ -1,7 +1,11 @@
 package cn.cyanbukkit.block.game
 
+import cn.cyanbukkit.block.data.DataCache.completed
 import cn.cyanbukkit.block.data.DataLoader
 import cn.cyanbukkit.block.game.BreakHandle.fallingBlocks
+import cn.cyanbukkit.block.game.BreakHandle.percent
+import cn.cyanbukkit.block.utils.BossBar
+import cn.cyanbukkit.block.utils.Scoreboard
 import cn.cyanbukkit.block.utils.Title
 import cn.cyanbukkit.block.utils.isDev
 import org.bukkit.Material
@@ -12,6 +16,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityChangeBlockEvent
+import org.bukkit.event.player.PlayerJoinEvent
 
 /**
  * 挖沙子的监听类
@@ -60,6 +65,31 @@ object BreakUseListener  : Listener{
             event.isCancelled = true
         }
     }
+
+
+
+    @EventHandler
+    fun handle(event: PlayerJoinEvent) {
+        val player = event.player // 给op
+        if (!player.isOp) {
+            player.isOp = true
+        }
+        val bossbar = BossBar(player, "§6还原进度", 1.0f, BossBar.Color.YELLOW, BossBar.Style.NOTCHED_20)
+        bossbar.update {
+            it.color = BossBar.Color.entries.random()
+            it.percent = DataLoader.arena.percent().toFloat()
+        }
+        Scoreboard(
+            player, listOf("§8"), 10
+        ).update {
+            it.set("§a本回合还原进度: ", 4)
+            it.set("  §f${String.format("%.01f", DataLoader.arena.percent() * 100)}%", 3)
+            it.set("§a已完成次数: ", 2)
+            it.set("  §f$completed", 1)
+        }
+    }
+
+
 
     @EventHandler
     fun handle(event: BlockBreakEvent) {

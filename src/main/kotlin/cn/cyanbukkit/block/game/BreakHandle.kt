@@ -7,7 +7,6 @@ import org.bukkit.Bukkit
 import org.bukkit.Effect
 import org.bukkit.Location
 import org.bukkit.entity.FallingBlock
-import org.bukkit.entity.Pig
 import org.bukkit.scheduler.BukkitRunnable
 
 object BreakHandle {
@@ -48,8 +47,36 @@ object BreakHandle {
                 }, (Math.random() * 20).toLong())
             }
         }
+        checkAndTeleportPlayers(getY(), 2)
     }
 
+
+    private fun checkAndTeleportPlayers(yLevel: Int, teleportUp: Int) {
+        // 获取所有在线玩家
+        val players = Bukkit.getOnlinePlayers()
+        // 遍历所有玩家
+        for (player in players) {
+            // 检查玩家是否在指定的y层
+            if (player.location.blockY == yLevel && DataLoader.arena.contains(player.location)) {
+                // 创建一个新的位置，将玩家向上传送
+                val newLocation = Location(
+                    player.world,
+                    player.location.x,
+                    player.location.y + teleportUp,
+                    player.location.z
+                )
+                player.teleport(newLocation)
+            }
+        }
+    }
+
+    fun spec(){
+        Bukkit.getOnlinePlayers().forEach {
+            if (DataLoader.arena.contains(it.location)) {
+                it.teleport(DataLoader.spectator)
+            }
+        }
+    }
     /**
      * 挖空极为1.0 此region下的空位占 计算从miny到maxY的所有block的全填满为0.0全挖空为1.0
      */
@@ -67,6 +94,7 @@ object BreakHandle {
     }
 
     var temp = 0
+
     /**
      * 在天空顶上使用fallingblock
      */
@@ -75,6 +103,13 @@ object BreakHandle {
             fAdd()
         }
         temp += count
+    }
+
+
+    fun Region.addAll() {
+        spec()
+        fAdd()
+        temp = (x.len * z.len * (maxY - y.min + 1))
     }
 
     private fun Region.fAdd() {
