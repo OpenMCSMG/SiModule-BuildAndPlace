@@ -3,6 +3,7 @@ package cn.cyanbukkit.block
 import cn.cyanbukkit.block.data.DataCache.checking
 import cn.cyanbukkit.block.data.DataCache.completed
 import cn.cyanbukkit.block.data.DataLoader
+import cn.cyanbukkit.block.game.BreakHandle.gameStart
 import cn.cyanbukkit.block.game.BreakHandle.isEmpty
 import cn.cyanbukkit.block.game.PlaceHandle.full
 import cn.cyanbukkit.block.game.PlaceHandle.getCrown
@@ -22,6 +23,38 @@ object PlaceAndBreak {
         var temp = DataLoader.keepTime
         return object : BukkitRunnable() {
             override fun run() {
+                if (DataLoader.arena.isEmpty()) {
+                    Bukkit.getOnlinePlayers().forEach {
+                        Title.title(it, "§c再坚持下", "§7${temp}", 10, 40, 10)
+                    }
+                    temp--
+                    checking = true
+                    if (temp < 0) {// 下个回合
+                        Bukkit.getOnlinePlayers().forEach {
+                            Title.title(it, "§c保持完毕", "§7挖掘区域已经被挖空", 10, 40, 10)
+                        }
+                        DataLoader.arena.gameStart()
+                        completed++
+                        checking = false
+                        temp = DataLoader.keepTime
+                    }
+                } else {
+                    if (checking) { // 中途被断了
+                        Bukkit.getOnlinePlayers().forEach {
+                            Title.title(it, "§c没保持住o~", "§7加油", 10, 40, 10)
+                        }
+                        checking = false
+                        temp = DataLoader.keepTime
+                    }
+                }
+            }
+        }
+    }
+
+    fun placeStatus() : BukkitRunnable {
+        var temp = DataLoader.keepTime
+        return object : BukkitRunnable() {
+            override fun run() {
                 if (DataLoader.arena.full()) {
                     Bukkit.getOnlinePlayers().forEach {
                         Title.title(it, "§a${temp}", "§c保持成功，继续保持！", 10, 40, 10)
@@ -29,8 +62,7 @@ object PlaceAndBreak {
                         it.sendMessage("§c本回合距离最终完成还剩余 $temp 秒！！！")
                         // 在区域的最高层 +1 spawnParticle 效果音符粒子 随机音调符号
                         DataLoader.arena.getCrown().forEach { loc ->
-                            loc.world!!.spawnParticle(Particle.NOTE,
-                                loc.add(0.5, 0.5, 0.5), 1)
+                            loc.world!!.spawnParticle(Particle.NOTE, loc.add(0.5, 0.5, 0.5), 1)
                         }
                     }
                     temp--
@@ -58,17 +90,6 @@ object PlaceAndBreak {
                         checking = false
                         temp = DataLoader.keepTime
                     }
-                }
-            }
-        }
-    }
-
-    fun placeStatus() : BukkitRunnable {
-        var temp = DataLoader.keepTime
-        return object : BukkitRunnable() {
-            override fun run() {
-                if (DataLoader.arena.isEmpty()) {
-
                 }
             }
         }

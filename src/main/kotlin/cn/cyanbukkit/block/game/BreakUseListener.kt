@@ -68,27 +68,6 @@ object BreakUseListener  : Listener{
 
 
 
-    @EventHandler
-    fun handle(event: PlayerJoinEvent) {
-        val player = event.player // 给op
-        if (!player.isOp) {
-            player.isOp = true
-        }
-        val bossbar = BossBar(player, "§6还原进度", 1.0f, BossBar.Color.YELLOW, BossBar.Style.NOTCHED_20)
-        bossbar.update {
-            it.color = BossBar.Color.entries.random()
-            it.percent = DataLoader.arena.percent().toFloat()
-        }
-        Scoreboard(
-            player, listOf("§8"), 10
-        ).update {
-            it.set("§a本回合还原进度: ", 4)
-            it.set("  §f${String.format("%.01f", DataLoader.arena.percent() * 100)}%", 3)
-            it.set("§a已完成次数: ", 2)
-            it.set("  §f$completed", 1)
-        }
-    }
-
 
 
     @EventHandler
@@ -111,5 +90,29 @@ object BreakUseListener  : Listener{
             event.isCancelled = true
         }
     }
+
+
+    @EventHandler
+    fun handle(event: PlayerJoinEvent) {
+        val player = event.player // 给op
+        if (!player.isOp) {
+            player.isOp = true
+        }
+        player.teleport(DataLoader.spawn)
+        val bossbar = BossBar(player, "§6挖掘进度", 1.0f, BossBar.Color.YELLOW, BossBar.Style.NOTCHED_20)
+        bossbar.update {
+            it.color = BossBar.Color.entries.random()
+            it.percent = DataLoader.arena.percent().toFloat()
+        }
+        Scoreboard(
+            player, listOf("§8"), 10
+        ).update {
+            it.set("§a当前已挖掘: ", 4)
+            it.set("  §f${String.format("%.01f", DataLoader.arena.percent() * 100)}%", 3)
+            it.set("§a已完成次数: ", 2)
+            it.set("  §f$completed", 1)
+        }
+    }
+
 
 }

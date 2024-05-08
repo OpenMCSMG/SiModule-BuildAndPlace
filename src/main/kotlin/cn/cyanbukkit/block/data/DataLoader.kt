@@ -1,5 +1,7 @@
 package cn.cyanbukkit.block.data
 
+import cn.cyanbukkit.block.PlaceAndBreak.breakStatus
+import cn.cyanbukkit.block.PlaceAndBreak.placeStatus
 import cn.cyanbukkit.block.cyanlib.launcher.CyanPluginLauncher
 import cn.cyanbukkit.block.game.BreakUseListener
 import cn.cyanbukkit.block.game.PlaceUseListener
@@ -41,10 +43,12 @@ object DataLoader {
             "挖" -> { // 注册挖的监听
                 isBreak = true
                 CyanPluginLauncher.cyanPlugin.server.pluginManager.registerEvents(BreakUseListener, CyanPluginLauncher.cyanPlugin)
+                breakStatus().runTaskTimer(CyanPluginLauncher.cyanPlugin, 0, 20)
             }
             "建" -> { // 注册放的监听
                 isBreak = false
                 CyanPluginLauncher.cyanPlugin.server.pluginManager.registerEvents(PlaceUseListener, CyanPluginLauncher.cyanPlugin)
+                placeStatus().runTaskTimer(CyanPluginLauncher.cyanPlugin, 0, 20)
             }
         }
     }

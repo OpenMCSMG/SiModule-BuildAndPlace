@@ -13,6 +13,8 @@ import cn.cyanbukkit.block.utils.Mode
  *  智能判定现在的模式是什么进行
  */
 class Assist {
+
+
     @Mode("1")
     fun mode1(amount: Int) {
         if (DataLoader.isBreak) {

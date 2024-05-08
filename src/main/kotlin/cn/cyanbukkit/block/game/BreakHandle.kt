@@ -28,6 +28,11 @@ object BreakHandle {
         }
     }
 
+
+    fun Region.gameStart() {
+        add(y.len)
+    }
+
     private fun Region.falling(x: Int, y: Int, z: Int) {
         val loc = Location(world, x + 0.5, y + 0.5, z + 0.5)
         val rand = DataLoader.breakList.random()

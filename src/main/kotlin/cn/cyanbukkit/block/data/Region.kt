@@ -26,8 +26,8 @@ data class Region(val pos1: Location, val pos2: Location, val world: org.bukkit.
     val x = NumberPair(pos1.blockX, pos2.blockX)
     val y = NumberPair(pos1.blockY, pos2.blockY)
     val z = NumberPair(pos1.blockZ, pos2.blockZ)
-    fun contains(location: Location): Boolean =
-        location.blockX in x && location.blockY >= y.min && location.blockZ in z
+    fun contains(location: Location): Boolean = location.blockX in x && location.blockY >= y.min && location.blockZ in z
+    fun contain(b: Block): Boolean = b.x in x && b.y in y && b.z in z
     val maxY = world.maxHeight
 
     /**
@@ -103,5 +103,6 @@ data class Region(val pos1: Location, val pos2: Location, val world: org.bukkit.
         val z = RandomUtils.nextInt(0, z.len / 2) + 0.15
         return Location(world, x + random(), (getY() + DataLoader.downSize).toDouble(), z + random())
     }
+
 
 }
