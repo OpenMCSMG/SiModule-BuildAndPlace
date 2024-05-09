@@ -8,6 +8,7 @@ import org.bukkit.entity.TNTPrimed
 import org.bukkit.event.Listener
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
+import org.checkerframework.checker.units.qual.t
 
 /**
  * @author LC_Official
@@ -22,15 +23,20 @@ object Effects : Listener {
         Bukkit.getScheduler().runTaskTimer(cyanPlugin, Runnable {
             // 持续时间播完在删 没播完的继续播 20tick 1s 而持续时间是存的秒
             queue.forEach {
-                if (it.value <= 0) {
-                    it.key.cancel()
-                    queue.remove(it.key)
-                } else {
-                    if (Bukkit.getScheduler().isCurrentlyRunning(it.key.taskId)) {
-                        queue[it.key] = it.value - 1
+                val taskId = try {
+                    it.key.taskId
+                } catch (e: Exception) {
+                    -1
+                }
+                if (taskId != -1 && (Bukkit.getScheduler().isCurrentlyRunning(taskId) || Bukkit.getScheduler().isQueued(taskId))) {
+                    if (it.value <= 0) {
+                        it.key.cancel()
+                        queue.remove(it.key)
                     } else {
-                        it.key.runTaskTimer(cyanPlugin, 0, 1L)
+                        queue[it.key] = it.value - 1
                     }
+                } else if (taskId == -1) {
+                    it.key.runTaskTimer(cyanPlugin, 0, 1L)
                 }
             }
         }, 0, 1L)

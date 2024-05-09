@@ -8,6 +8,7 @@ import org.bukkit.FireworkEffect
 import org.bukkit.Location
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Firework
+import org.bukkit.entity.Frog
 import org.bukkit.entity.TNTPrimed
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -72,7 +73,8 @@ object TNTBoomHandle : Listener {
             fallDistance = 0.5f
             fuseTicks = 100
         }
-        (loc.world!!.spawnEntity(loc, EntityType.FROG) as TNTPrimed)
+        val frog = (loc.world!!.spawnEntity(loc, EntityType.FROG) as Frog)
+        tE.addPassenger(frog)
         tnt.add(tE)
     }
 

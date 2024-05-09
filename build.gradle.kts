@@ -1,15 +1,16 @@
-val funcName = "putfunname"
+val funcName = "block"
 val group = "cn.cyanbukkit.${funcName}"
-val version = "0.1"
+version = "0.1"
 val mainPlugin = "SiModuleGame"
 
 bukkit {
     name = rootProject.name
-    description = "put fun name here"
+    description = "挖建混合版"
     authors = listOf("Your Name")
     website = "https://cyanbukkit.cn"
     main = "${group}.cyanlib.launcher.CyanPluginLauncher"
     loadBefore = listOf(mainPlugin)
+    apiVersion = "1.13"
 }
 
 plugins {
@@ -32,12 +33,12 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(17)
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 tasks {

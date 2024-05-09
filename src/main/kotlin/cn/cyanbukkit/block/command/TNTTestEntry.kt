@@ -2,6 +2,7 @@ package cn.cyanbukkit.block.command
 
 import cn.cyanbukkit.block.gamehandle.TNTBoom
 import cn.cyanbukkit.block.utils.Mode
+import cn.cyanbukkit.block.utils.anise
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
@@ -20,8 +21,8 @@ object TNTTestEntry : Command("tnttest") {
                 if (mode.value == args[0]) {
                     val info = args.sliceArray(1 until args.size)
                     val parameterTypes = method.parameterTypes
-                    val convertedArgs = anise(info, parameterTypes)
-                    method.invoke(hand, p, *convertedArgs)
+                    val convertedArgs = anise(info, parameterTypes, p)
+                    method.invoke(hand, *convertedArgs)
                     return true
                 }
             }

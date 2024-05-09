@@ -98,6 +98,7 @@ public class CyanPluginLauncher extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         registerCommand(TNTTestEntry.INSTANCE);
         registerCommand(AssistEntry.INSTANCE);
         PlaceAndBreak.INSTANCE.init();
