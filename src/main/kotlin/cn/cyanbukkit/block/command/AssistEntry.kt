@@ -6,7 +6,7 @@ import cn.cyanbukkit.block.utils.anise
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
-object AssistEntry : Command("tnttest") {
+object AssistEntry : Command("assist") {
     override fun execute(sender: CommandSender, commandLabel: String, args: Array<out String>): Boolean {
         if (sender !is org.bukkit.entity.Player) {
             sender.sendMessage("§c只有玩家才能执行此命令")

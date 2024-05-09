@@ -6,6 +6,7 @@ import org.bukkit.Effect
 import org.bukkit.Location
 import org.bukkit.block.Block
 import kotlin.math.floor
+import kotlin.math.min
 
 object PlaceHandle {
 
@@ -38,13 +39,15 @@ object PlaceHandle {
     }
 
     fun Region.put(b: Block) {
-        val size = y.len / DataLoader.placeList.size
-        val type = DataLoader.placeList[floor((b.y - y.min) / size * 1.0).toInt()]
+        val size = if (DataLoader.placeList.size != 0) y.len / DataLoader.placeList.size else 1
+        val index = floor((b.y - y.min) / size * 1.0).toInt()
+        val safeIndex = min(index, DataLoader.placeList.size - 1)
+        val type = DataLoader.placeList[safeIndex]
         world.playEffect(b.location, Effect.STEP_SOUND, type)
         b.type = type
     }
 
-    fun Region.getCrown() : List<Location> {
+    fun Region.getCrown(): List<Location> {
         val locs = mutableListOf<Location>()
         for (dx in x.min..x.max) {
             for (dz in z.min..z.max) {
@@ -68,8 +71,6 @@ object PlaceHandle {
     fun Region.full(): Boolean {
         return percent() == 1.0
     }
-
-
 
 
 }

@@ -130,7 +130,7 @@ object BreakHandle {
                 }
             }
         }
-        obj.runTaskTimer(cyanPlugin, 0L, 10L)
+        obj.runTaskTimer(cyanPlugin, 0L, 28L)
     }
 
 

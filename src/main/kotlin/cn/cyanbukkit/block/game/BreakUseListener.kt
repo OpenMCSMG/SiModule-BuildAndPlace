@@ -38,6 +38,19 @@ object BreakUseListener  : Listener{
         }
     }
 
+
+    @EventHandler
+    fun xiaLuoToBlock(e: EntityChangeBlockEvent) {
+        if (e.entityType == EntityType.FALLING_BLOCK) {
+            val fallingBlock = e.entity as FallingBlock
+            // 如果下落的不在区域内就取消
+            if (!DataLoader.arena.contains(fallingBlock.location)) {
+                e.isCancelled = true
+                return
+            }
+        }
+    }
+
     /**
      * AntiCheating
      */

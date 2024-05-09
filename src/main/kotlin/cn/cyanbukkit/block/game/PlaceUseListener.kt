@@ -42,7 +42,7 @@ object PlaceUseListener : Listener {
     @EventHandler
     fun handle(event: BlockPlaceEvent) {
         if (isDev(event.player)) return
-        if (!DataLoader.arena.contains(event.block.location)) {
+        if (!DataLoader.arena.contain(event.block)) {
             event.isCancelled = true
         } else {
             DataLoader.arena.put(event.block)

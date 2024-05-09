@@ -3,6 +3,7 @@ package cn.cyanbukkit.block.data
 import cn.cyanbukkit.block.PlaceAndBreak.breakStatus
 import cn.cyanbukkit.block.PlaceAndBreak.placeStatus
 import cn.cyanbukkit.block.cyanlib.launcher.CyanPluginLauncher
+import cn.cyanbukkit.block.cyanlib.launcher.CyanPluginLauncher.cyanPlugin
 import cn.cyanbukkit.block.game.BreakHandle.gameStart
 import cn.cyanbukkit.block.game.BreakUseListener
 import cn.cyanbukkit.block.game.PlaceUseListener
@@ -23,8 +24,8 @@ object DataLoader {
     var isBreak = false
 
     fun load() {
-        val setting = CyanPluginLauncher.cyanPlugin.config.getConfigurationSection("Setting")
-        arenaWorld = setting!!.getString("Arena.World")?.let { CyanPluginLauncher.cyanPlugin.server.getWorld(it) }!!
+        val setting = cyanPlugin.config.getConfigurationSection("Setting")
+        arenaWorld = setting!!.getString("Arena.World")?.let { cyanPlugin.server.getWorld(it) }!!
         val pos1 = setting.getString("Arena.Pos1")!!
         val pos2 = setting.getString("Arena.Pos2")!!
         arena = Region(Location(arenaWorld, pos1.split(",")[0].toDouble(), pos1.split(",")[1].toDouble(), pos1.split(",")[2].toDouble()),
@@ -54,21 +55,23 @@ object DataLoader {
             }
         }
         // 识别模式
-        val mode =  CyanPluginLauncher.cyanPlugin.config.getString("Mode")!!
+        val mode =  cyanPlugin.config.getString("Mode")!!
 
         when (mode) {
             "挖" -> { // 注册挖的监听
                 isBreak = true
-                CyanPluginLauncher.cyanPlugin.server.pluginManager.registerEvents(BreakUseListener, CyanPluginLauncher.cyanPlugin)
-                breakStatus().runTaskTimer(CyanPluginLauncher.cyanPlugin, 0, 20)
+                cyanPlugin.server.pluginManager.registerEvents(BreakUseListener, cyanPlugin)
+                breakStatus().runTaskTimer(cyanPlugin, 0, 20)
                 arena.clean()
                 arena.gameStart()
+                cyanPlugin.logger.info("启动挖的模式")
             }
             "建" -> { // 注册放的监听
                 isBreak = false
-                CyanPluginLauncher.cyanPlugin.server.pluginManager.registerEvents(PlaceUseListener, CyanPluginLauncher.cyanPlugin)
-                placeStatus().runTaskTimer(CyanPluginLauncher.cyanPlugin, 0, 20)
+                cyanPlugin.server.pluginManager.registerEvents(PlaceUseListener, cyanPlugin)
+                placeStatus().runTaskTimer(cyanPlugin, 0, 20)
                 arena.clean()
+                cyanPlugin.logger.info("启动建的模式")
             }
         }
     }
