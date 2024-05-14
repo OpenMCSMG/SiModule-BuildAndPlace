@@ -101,7 +101,7 @@ data class Region(val pos1: Location, val pos2: Location, val world: org.bukkit.
     fun randomLoc() : Location {
         val x = RandomUtils.nextInt(0, x.len / 2) + 0.15
         val z = RandomUtils.nextInt(0, z.len / 2) + 0.15
-        return Location(world, x + random(), (getY() + DataLoader.downSize).toDouble(), z + random())
+        return Location(world, x * random(), (getY() + DataLoader.downSize).toDouble(), z * random())
     }
 
 
