@@ -1,6 +1,6 @@
 val funcName = "block"
 val group = "cn.cyanbukkit.${funcName}"
-version = "0.1"
+version = "0.2"
 val mainPlugin = "SiModuleGame"
 
 bukkit {

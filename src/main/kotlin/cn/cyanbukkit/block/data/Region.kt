@@ -1,11 +1,14 @@
 package cn.cyanbukkit.block.data
 
+import cn.cyanbukkit.block.cyanlib.launcher.CyanPluginLauncher.cyanPlugin
 import org.apache.commons.lang3.RandomUtils
+import org.bukkit.Bukkit
 import org.bukkit.Effect
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.entity.Pig
+import java.awt.Color.cyan
 
 
 class NumberPair(a: Int, b: Int) {
@@ -37,9 +40,11 @@ data class Region(val pos1: Location, val pos2: Location, val world: org.bukkit.
         for (dy in y.min..maxY) {
             for (dx in x.min..x.max) {
                 for (dz in z.min..z.max) {
-                    val b = world.getBlockAt(dx, dy, dz)
-                    world.playEffect(b.location, Effect.STEP_SOUND, b.type)
-                    b.type = Material.AIR
+                    Bukkit.getScheduler().runTask(cyanPlugin, Runnable {
+                        val b = world.getBlockAt(dx, dy, dz)
+                        world.playEffect(b.location, Effect.STEP_SOUND, b.type)
+                        b.type = Material.AIR
+                    })
                 }
             }
         }
@@ -84,11 +89,13 @@ data class Region(val pos1: Location, val pos2: Location, val world: org.bukkit.
 
     fun spawnPig(amount: Int = 10) {
         for (c in 0 until amount) {
-            val loc = Location(world, x.min + (x.len * Math.random()), getY() + 3.5, z.min + (z.len * Math.random()))
-            (world.spawnEntity(loc, org.bukkit.entity.EntityType.PIG) as Pig).apply {
-                getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH)!!.baseValue = 50.0
-                health = 50.0
-            }
+            Bukkit.getScheduler().runTask(cyanPlugin, Runnable {
+                val loc = Location(world, x.min + (x.len * Math.random()), getY() + 3.5, z.min + (z.len * Math.random()))
+                (world.spawnEntity(loc, org.bukkit.entity.EntityType.PIG) as Pig).apply {
+                    getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH)!!.baseValue = 50.0
+                    health = 50.0
+                }
+            })
         }
     }
     private fun random(): Int {

@@ -34,13 +34,15 @@ object BreakHandle {
     }
 
     private fun Region.falling(x: Int, y: Int, z: Int) {
-        val loc = Location(world, x + 0.5, y + 0.5, z + 0.5)
-        val rand = DataLoader.breakList.random()
-        fallingBlocks.add(world.spawnFallingBlock(loc, rand.createBlockData()).apply {
-            setHurtEntities(false)
-            this.dropItem = false
+        Bukkit.getScheduler().runTask(cyanPlugin, Runnable {
+            val loc = Location(world, x + 0.5, y + 0.5, z + 0.5)
+            val rand = DataLoader.breakList.random()
+            fallingBlocks.add(world.spawnFallingBlock(loc, rand.createBlockData()).apply {
+                setHurtEntities(false)
+                this.dropItem = false
+            })
+            world.playEffect(loc, Effect.STEP_SOUND, rand)
         })
-        world.playEffect(loc, Effect.STEP_SOUND, rand)
     }
 
     private fun Region.falling() {

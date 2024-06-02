@@ -1,7 +1,9 @@
 package cn.cyanbukkit.block.game
 
+import cn.cyanbukkit.block.cyanlib.launcher.CyanPluginLauncher.cyanPlugin
 import cn.cyanbukkit.block.data.DataLoader
 import cn.cyanbukkit.block.data.Region
+import org.bukkit.Bukkit
 import org.bukkit.Effect
 import org.bukkit.Location
 import org.bukkit.block.Block
@@ -39,12 +41,14 @@ object PlaceHandle {
     }
 
     fun Region.put(b: Block) {
-        val size = if (DataLoader.placeList.size != 0) y.len / DataLoader.placeList.size else 1
-        val index = floor((b.y - y.min) / size * 1.0).toInt()
-        val safeIndex = min(index, DataLoader.placeList.size - 1)
-        val type = DataLoader.placeList[safeIndex]
-        world.playEffect(b.location, Effect.STEP_SOUND, type)
-        b.type = type
+        Bukkit.getScheduler().runTask(cyanPlugin, Runnable {
+            val size = if (DataLoader.placeList.size != 0) y.len / DataLoader.placeList.size else 1
+            val index = floor((b.y - y.min) / size * 1.0).toInt()
+            val safeIndex = min(index, DataLoader.placeList.size - 1)
+            val type = DataLoader.placeList[safeIndex]
+            world.playEffect(b.location, Effect.STEP_SOUND, type)
+            b.type = type
+        })
     }
 
     fun Region.getCrown(): List<Location> {
