@@ -1,6 +1,7 @@
 package cn.cyanbukkit.block
 
 import cn.cyanbukkit.block.cyanlib.launcher.CyanPluginLauncher.cyanPlugin
+import cn.cyanbukkit.block.cyanlib.scoreboard.Board
 import cn.cyanbukkit.block.data.DataCache.checking
 import cn.cyanbukkit.block.data.DataCache.completed
 import cn.cyanbukkit.block.data.DataLoader
@@ -11,7 +12,6 @@ import cn.cyanbukkit.block.game.PlaceHandle.full
 import cn.cyanbukkit.block.game.PlaceHandle.getCrown
 import cn.cyanbukkit.block.game.TNTBoomHandle
 import cn.cyanbukkit.block.utils.BossBar
-import cn.cyanbukkit.block.utils.Scoreboard
 import cn.cyanbukkit.block.utils.Title
 import org.bukkit.Bukkit
 import org.bukkit.Particle
@@ -20,7 +20,6 @@ import org.bukkit.scheduler.BukkitRunnable
 object PlaceAndBreak {
     fun init() {
         BossBar.init(cyanPlugin)
-        Scoreboard.init(cyanPlugin)
         DataLoader.load()
         TNTBoomHandle.load()
         Effects.init()

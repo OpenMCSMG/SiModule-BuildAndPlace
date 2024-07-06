@@ -1,11 +1,15 @@
 package cn.cyanbukkit.block.game
 
+import cn.cyanbukkit.block.cyanlib.launcher.CyanPluginLauncher.cyanPlugin
+import cn.cyanbukkit.block.cyanlib.scoreboard.FixedBody
+import cn.cyanbukkit.block.cyanlib.scoreboard.Line
+import cn.cyanbukkit.block.cyanlib.scoreboard.SidebarBoard
+import cn.cyanbukkit.block.cyanlib.scoreboard.TextLine
 import cn.cyanbukkit.block.data.DataCache.completed
 import cn.cyanbukkit.block.data.DataLoader
 import cn.cyanbukkit.block.game.BreakHandle.fallingBlocks
 import cn.cyanbukkit.block.game.BreakHandle.percent
 import cn.cyanbukkit.block.utils.BossBar
-import cn.cyanbukkit.block.utils.Scoreboard
 import cn.cyanbukkit.block.utils.Title
 import cn.cyanbukkit.block.utils.isDev
 import org.bukkit.Material
@@ -17,6 +21,8 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityChangeBlockEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.scheduler.BukkitRunnable
+import java.util.ArrayList
 
 /**
  * 挖沙子的监听类
@@ -112,19 +118,25 @@ object BreakUseListener  : Listener{
             player.isOp = true
         }
         player.teleport(DataLoader.spawn)
-        val bossbar = BossBar(player, "§6挖掘进度", 1.0f, BossBar.Color.YELLOW, BossBar.Style.NOTCHED_20)
-        bossbar.update {
+        val bossBar = BossBar(player, "§6挖掘进度", 1.0f, BossBar.Color.YELLOW, BossBar.Style.NOTCHED_20)
+        bossBar.update {
             it.color = BossBar.Color.entries.random()
             it.percent = DataLoader.arena.percent().toFloat()
         }
-        Scoreboard(
-            player, listOf("§8"), 10
-        ).update {
-            it.set("§a当前已挖掘: ", 4)
-            it.set("  §f${String.format("%.01f", DataLoader.arena.percent() * 100)}%", 3)
-            it.set("§a已完成次数: ", 2)
-            it.set("  §f$completed", 1)
-        }
+        val b  = SidebarBoard.of(cyanPlugin, player)
+        player.scoreboard = b.scoreboard
+        object : BukkitRunnable() {
+            override fun run() {
+                b.setHead(TextLine.of(""))
+                b.setBody(FixedBody.of(
+                    TextLine.of("§a当前已挖掘: "),
+                    TextLine.of("  §f${String.format("%.01f", DataLoader.arena.percent() * 100)}%"),
+                    TextLine.of("§a已完成次数: "),
+                    TextLine.of("  §f$completed")
+                ))
+                b.update()
+            }
+        }.runTaskTimer(cyanPlugin, 0, 20)
     }
 
 

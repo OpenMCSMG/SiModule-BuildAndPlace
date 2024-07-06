@@ -1,9 +1,5 @@
 package cn.cyanbukkit.block.utils
 
-import com.comphenix.protocol.PacketType
-import com.comphenix.protocol.ProtocolLibrary
-import com.comphenix.protocol.utility.MinecraftVersion
-import com.comphenix.protocol.wrappers.WrappedDataWatcher
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.boss.BarColor
@@ -24,7 +20,7 @@ class BossBar(
     var color: Color = Color.PINK,
     var style: Style = Style.PROGRESS
 ) {
-    val uniqueId = UUID.randomUUID()
+    val uniqueId: UUID = UUID.randomUUID()
     private val entityId = uniqueId.hashCode()
     companion object {
         private var plugin: Plugin? = null
@@ -67,30 +63,18 @@ class BossBar(
     fun close() {
         tasks[player]!!.cancel()
         tasks.remove(player)
-        if (ProtocolLibrary.getProtocolManager().minecraftVersion < MinecraftVersion.COMBAT_UPDATE) {
-            val packetDestroy =
-                ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_DESTROY)
-            packetDestroy.integerArrays.write(0, intArrayOf(entityId))
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetDestroy, false)
-        } else {
-            (bossBar as org.bukkit.boss.BossBar).removePlayer(player)
-            bossBar = null
-        }
+        (bossBar as org.bukkit.boss.BossBar).removePlayer(player)
+        bossBar = null
         data.remove(player)
     }
 
-    private val dataWatcher = WrappedDataWatcher()
 
     init {
         if (data.containsKey(player)) {
             data[player]!!.close()
         }
         data[player] = this
-        if (ProtocolLibrary.getProtocolManager().minecraftVersion >= MinecraftVersion.COMBAT_UPDATE) {
-            modern()
-        } else {
-            legacy()
-        }
+        modern()
     }
 
     var bossBar : Any? =null
@@ -110,56 +94,7 @@ class BossBar(
         }, 0L, 10L)
     }
 
-    private fun legacy() {
-        updateDistantLocation()
-        val packetSpawn =
-            ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.SPAWN_ENTITY_LIVING)
-        packetSpawn.integers.write(0, entityId)
-        packetSpawn.integers.write(1, 64) // Wither
-        packetSpawn.integers.write(3, (location.blockX * 32))
-        packetSpawn.integers.write(4, (location.blockY * 32))
-        packetSpawn.integers.write(5, (location.blockZ * 32))
-        dataWatcher.setObject(0, 0x20.toByte())
-        dataWatcher.setObject(1, 300.toShort())
-        dataWatcher.setObject(2, text)
-        dataWatcher.setObject(3, 1.toByte())
-        dataWatcher.setObject(
-            6,
-            (300 * (if (percent > 1.0f) 1.0f else if (percent < 0f) 0f else percent)),
-            true
-        )
-        dataWatcher.setObject(7, org.bukkit.Color.BLACK.asRGB())
-        dataWatcher.setObject(8, 0.toByte())
-        dataWatcher.setObject(15, 1.toByte())
-        dataWatcher.setObject(20, 819)
-        packetSpawn.dataWatcherModifier.write(0, dataWatcher)
-        ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetSpawn, false)
-        tasks[player] = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin!!, Runnable {
-            update(this)
-            updateDistantLocation()
-            val packetTeleport =
-                ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_TELEPORT)
-            packetTeleport.integers.write(0, entityId)
-            packetTeleport.integers.write(1, (location.blockX * 32))
-            packetTeleport.integers.write(2, (location.blockY * 32))
-            packetTeleport.integers.write(3, (location.blockZ * 32))
-            packetTeleport.bytes.write(0, (location.yaw * 256 / 360).toInt().toByte())
-            packetTeleport.bytes.write(0, (location.pitch * 256 / 360).toInt().toByte())
-            packetTeleport.booleans.write(0, true)
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetTeleport, false)
-            val packetMeta =
-                ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_METADATA)
-            packetMeta.integers.write(0, entityId)
-            dataWatcher.setObject(2, text)
-            dataWatcher.setObject(
-                6,
-                (300 * (if (percent > 1.0f) 1.0f else if (percent < 0f) 0f else percent)),
-                true
-            )
-            packetMeta.watchableCollectionModifier.write(0, dataWatcher.watchableObjects)
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetMeta, false)
-        }, 0L, 5L)
-    }
+
 
     fun update(consumer: (BossBar) -> Unit) {
         update = consumer

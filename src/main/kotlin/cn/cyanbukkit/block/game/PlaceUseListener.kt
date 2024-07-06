@@ -1,17 +1,21 @@
 package cn.cyanbukkit.block.game
 
+import cn.cyanbukkit.block.cyanlib.launcher.CyanPluginLauncher.cyanPlugin
+import cn.cyanbukkit.block.cyanlib.scoreboard.*
 import cn.cyanbukkit.block.data.DataCache.completed
 import cn.cyanbukkit.block.data.DataLoader
 import cn.cyanbukkit.block.game.PlaceHandle.percent
 import cn.cyanbukkit.block.game.PlaceHandle.put
 import cn.cyanbukkit.block.utils.BossBar
-import cn.cyanbukkit.block.utils.Scoreboard
 import cn.cyanbukkit.block.utils.isDev
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.scheduler.BukkitRunnable
+import java.util.ArrayList
 
 object PlaceUseListener : Listener {
 
@@ -23,19 +27,29 @@ object PlaceUseListener : Listener {
             player.isOp = true
         }
         player.teleport(DataLoader.spawn)
-        val bossbar = BossBar(player, "§6还原进度", 1.0f, BossBar.Color.YELLOW, BossBar.Style.NOTCHED_20)
-        bossbar.update {
+        val bossBar = BossBar(player, "§6还原进度", 1.0f, BossBar.Color.YELLOW, BossBar.Style.NOTCHED_20)
+        bossBar.update {
             it.color = BossBar.Color.entries.random()
             it.percent = DataLoader.arena.percent().toFloat()
         }
-        Scoreboard(
-            player, listOf("§8"), 10
-        ).update {
-            it.set("§a本回合还原进度: ", 4)
-            it.set("  §f${String.format("%.01f", DataLoader.arena.percent() * 100)}%", 3)
-            it.set("§a已完成次数: ", 2)
-            it.set("  §f$completed", 1)
-        }
+        val b = SidebarBoard.of(cyanPlugin, player)
+        player.scoreboard = b.scoreboard
+        object : BukkitRunnable() {
+            override fun run() {
+                b.setHead(TextLine.of(""))
+                b.setBody(
+                    FixedBody.of(
+                        TextLine.of("§a本回合还原进度: "),
+                        TextLine.of("  §f${String.format("%.01f", DataLoader.arena.percent() * 100)}%"),
+                        TextLine.of("§a已完成次数: "),
+                        TextLine.of("  §f$completed")
+                    )
+                )
+                b.update()
+            }
+        }.runTaskTimer(cyanPlugin, 0, 20)
+
+//        Bukkit.getScheduler().runTaskTimer(cyanPlugin, Board(this), 0, 20)
     }
 
 
