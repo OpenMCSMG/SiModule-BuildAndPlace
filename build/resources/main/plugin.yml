@@ -1,0 +1,10 @@
+name: SiModule-BuildAndPlace
+version: 0.4.2
+main: cn.cyanbukkit.block.cyanlib.launcher.CyanPluginLauncher
+description: 挖建混合版
+authors:
+  - Your Name
+website: https://cyanbukkit.cn
+api-version: "1.13"
+loadbefore:
+  - SiModuleGame
