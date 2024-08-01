@@ -48,7 +48,6 @@ object PlaceUseListener : Listener {
                 b.update()
             }
         }.runTaskTimer(cyanPlugin, 0, 20)
-
 //        Bukkit.getScheduler().runTaskTimer(cyanPlugin, Board(this), 0, 20)
     }
 
